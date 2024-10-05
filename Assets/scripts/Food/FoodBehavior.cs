@@ -16,7 +16,7 @@ public class FoodBehavior : MonoBehaviour
         {
             // Call the player's eat method
             collision.gameObject.GetComponent<PlayerMovements>().eat();
-            FindAnyObjectByType<SpwanManager>().ReturnToPool(this.gameObject);
+            FindAnyObjectByType<SpawnManager>().ReturnToPool(this.gameObject);
         }
     }
 }
