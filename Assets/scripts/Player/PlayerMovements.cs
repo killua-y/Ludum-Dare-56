@@ -13,6 +13,8 @@ public class PlayerMovements : MonoBehaviour
 
     private bool canMove = true;
 
+    public Animator animator;
+
     private void Start()
     {
         levelUpManager = FindAnyObjectByType<LevelUpManager>();
