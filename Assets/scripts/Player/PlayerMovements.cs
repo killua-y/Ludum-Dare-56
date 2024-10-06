@@ -1,34 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerMovements : MonoBehaviour
 {
-    public float moveSpeed = 5f; // Speed of player movement
-    private Vector2 movement;
+    private float moveSpeed = 5f; // Speed of player movement
     public int point;
+    public TextMeshProUGUI foodText;
+    public Vector2 movingDrection;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        // Get input from the user for horizontal and vertical movement
-        float moveX = Input.GetAxisRaw("Horizontal"); // Left (-1) and Right (1)
-        float moveY = Input.GetAxisRaw("Vertical");   // Down (-1) and Up (1)
-
-        // Normalize the vector to maintain consistent diagonal speed
-        movement = new Vector2(moveX, moveY).normalized;
     }
 
-    // Called at fixed time intervals for physics calculations
-    void FixedUpdate()
+    void Update()
     {
-        // Move the player by applying the movement vector
-        transform.Translate(movement * moveSpeed * Time.fixedDeltaTime);
+        // WASD controls for fish flock movement
+        float horizontal = Input.GetAxis("Horizontal"); // A/D keys for horizontal movement
+        float vertical = Input.GetAxis("Vertical");     // W/S keys for vertical movement
+
+        Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
+
+        // If no input is given, continue moving in the last direction
+        if (inputDirection.magnitude == 0)
+        {
+            inputDirection = transform.up;
+        }
+
+        movingDrection = inputDirection;
+
+        // Calculate the final direction
+        Vector2 direction = movingDrection;
+
+        // Calculate the rotation angle
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+
+        // Update fish flock rotation and movement
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+        transform.position += (Vector3)direction * moveSpeed * Time.deltaTime;
     }
 
     public void eat()
     {
         point += 1;
+        foodText.text = "point: " + point;
     }
 
 }

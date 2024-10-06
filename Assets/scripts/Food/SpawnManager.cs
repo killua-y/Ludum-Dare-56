@@ -6,31 +6,16 @@ public class SpawnManager : MonoBehaviour
 {
     public GameObject nutrientPrefab; // The nutrient prefab
     private float spawnInterval = 2f;  // Time between spawns
-    private float nutrientSpeed = 2f;  // Speed of nutrient movement
     private float seaSurface = 4f;     // Sea surface boundary (y-axis)
     private float seaFloor = -2f;      // Sea floor boundary (y-axis)
     private float minSpawnDistance = 1f; // Minimum distance between nutrients
 
     private List<GameObject> existingNutrients = new List<GameObject>(); // Track existing nutrients
-    private Queue<GameObject> nutrientPool = new Queue<GameObject>();    // Object pool for nutrients
-    private Dictionary<GameObject, Coroutine> nutrientCoroutines = new Dictionary<GameObject, Coroutine>(); // Track coroutines
-
     private Camera cam;
-    private float screenLeft, screenRight, screenTop, screenBottom;
 
     void Start()
     {
         cam = Camera.main;
-
-        // Get camera boundaries (in world units)
-        Vector3 screenBottomLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, cam.nearClipPlane));
-        Vector3 screenTopRight = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, cam.nearClipPlane));
-
-        screenLeft = screenBottomLeft.x;
-        screenRight = screenTopRight.x;
-        screenBottom = screenBottomLeft.y;
-        screenTop = screenTopRight.y;
-
         StartCoroutine(SpawnNutrients());
     }
 
@@ -44,43 +29,20 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    // Returns the nutrient to the pool instead of destroying it
     public void ReturnToPool(GameObject food)
     {
-        // Stop the movement coroutine
-        if (nutrientCoroutines.ContainsKey(food))
-        {
-            StopCoroutine(nutrientCoroutines[food]);
-            nutrientCoroutines.Remove(food);
-        }
-
         existingNutrients.Remove(food);
-        food.SetActive(false);
-        nutrientPool.Enqueue(food);
+        Destroy(food);
     }
 
-    // Spawns a nutrient by reusing from the pool or instantiating if none are available
+    // Spawns a nutrient randomly outside the screen but within sea surface and sea floor bounds
     void SpawnNutrient()
     {
         Vector3 spawnPosition = GetValidSpawnPosition();
 
-        GameObject nutrient;
-        if (nutrientPool.Count > 0)
-        {
-            nutrient = nutrientPool.Dequeue();
-            nutrient.transform.position = spawnPosition;
-            nutrient.SetActive(true);
-        }
-        else
-        {
-            nutrient = Instantiate(nutrientPrefab, spawnPosition, Quaternion.identity);
-        }
-
+        // Instantiate the nutrient and add it to the list of existing nutrients
+        GameObject nutrient = Instantiate(nutrientPrefab, spawnPosition, Quaternion.identity);
         existingNutrients.Add(nutrient);
-
-        // Start moving the nutrient randomly and track the coroutine
-        Coroutine movementCoroutine = StartCoroutine(MoveNutrientRandomly(nutrient));
-        nutrientCoroutines[nutrient] = movementCoroutine;
     }
 
     // Gets a valid spawn position that's not too close to other nutrients
@@ -116,9 +78,13 @@ public class SpawnManager : MonoBehaviour
     // Gets a random position outside the screen but within the sea bounds (+5 and -5 on the Y-axis)
     Vector3 GetRandomOffScreenPositionWithinSea()
     {
+        // Get camera boundaries (in world units)
+        Vector3 screenBottomLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, cam.transform.position.z));
+        Vector3 screenTopRight = cam.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, cam.transform.position.z));
+
         // Ensure y-axis is between the sea surface and sea floor limits
-        float minY = Mathf.Max(screenBottom - 5, seaFloor);
-        float maxY = Mathf.Min(screenTop + 5, seaSurface);
+        float minY = Mathf.Max(screenBottomLeft.y, seaFloor);
+        float maxY = Mathf.Min(screenTopRight.y, seaSurface);
 
         // Randomly choose to spawn left, right, top, or bottom of the screen
         int side = Random.Range(0, 4); // 0 = left, 1 = right, 2 = top, 3 = bottom
@@ -127,53 +93,19 @@ public class SpawnManager : MonoBehaviour
         switch (side)
         {
             case 0: // Left of the screen
-                spawnPosition = new Vector3(screenLeft - 1, Random.Range(minY, maxY), 0);
+                spawnPosition = new Vector3(screenBottomLeft.x - 1, Random.Range(minY, maxY), 0);
                 break;
             case 1: // Right of the screen
-                spawnPosition = new Vector3(screenRight + 1, Random.Range(minY, maxY), 0);
+                spawnPosition = new Vector3(screenTopRight.x + 1, Random.Range(minY, maxY), 0);
                 break;
             case 2: // Top of the screen (but respecting sea surface)
-                spawnPosition = new Vector3(Random.Range(screenLeft, screenRight), Mathf.Min(seaSurface + 1, screenTop + 1), 0);
+                spawnPosition = new Vector3(Random.Range(screenBottomLeft.x, screenTopRight.x), maxY + 1, 0);
                 break;
             case 3: // Bottom of the screen (but respecting sea floor)
-                spawnPosition = new Vector3(Random.Range(screenLeft, screenRight), Mathf.Max(seaFloor - 1, screenBottom - 1), 0);
+                spawnPosition = new Vector3(Random.Range(screenBottomLeft.x, screenTopRight.x), minY - 1, 0);
                 break;
         }
 
         return spawnPosition;
-    }
-
-    // Coroutine to move the nutrient in random directions
-    IEnumerator MoveNutrientRandomly(GameObject nutrient)
-    {
-        while (true)
-        {
-            // Choose a random direction for the nutrient to move
-            Vector2 randomDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-            Vector3 movement = randomDirection * nutrientSpeed * Time.deltaTime;
-
-            // Apply movement to the nutrient
-            nutrient.transform.position += movement;
-
-            // Check if nutrient is out of bounds
-            if (IsOutOfBounds(nutrient))
-            {
-                ReturnToPool(nutrient);
-                yield break;
-            }
-
-            yield return null;
-        }
-    }
-
-    // Checks if the nutrient is outside the allowed bounds
-    bool IsOutOfBounds(GameObject nutrient)
-    {
-        Vector3 pos = nutrient.transform.position;
-        if (pos.x < screenLeft - 1 || pos.x > screenRight + 1 || pos.y < seaFloor || pos.y > seaSurface)
-        {
-            return true;
-        }
-        return false;
     }
 }

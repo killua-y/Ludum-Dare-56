@@ -32,7 +32,6 @@ public class BackgroundController : MonoBehaviour
     // Moves the rightmost image to the left to simulate endless scrolling
     public void ScrollRight()
     {
-        Debug.Log("ScrollRight");
         // Move the rightmost image to the left of the leftmost image
         Transform rightMostImage = seaImages[2];
         rightMostImage.position = new Vector3(seaImages[0].position.x - imageWidth, rightMostImage.position.y, rightMostImage.position.z);
@@ -44,7 +43,6 @@ public class BackgroundController : MonoBehaviour
     // Moves the leftmost image to the right to simulate endless scrolling
     public void ScrollLeft()
     {
-        Debug.Log("ScrollLeft");
         // Move the leftmost image to the right of the rightmost image
         Transform leftMostImage = seaImages[0];
         leftMostImage.position = new Vector3(seaImages[2].position.x + imageWidth, leftMostImage.position.y, leftMostImage.position.z);
