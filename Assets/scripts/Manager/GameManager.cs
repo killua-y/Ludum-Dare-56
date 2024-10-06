@@ -14,16 +14,47 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI endSceneText;
     public Button EndSceneButton;
 
+    public string[] currentPages;              // 用于存储每页文本内容的数组
+    public string[] currentImagePages;         // 用于存储每页图片的数组
+    private int currentPageNumber = 0;         // 当前页数
+
+    private bool endingScene = false;
+
+    LevelUpManager levelUpManager;
+    TextPageManager textPageManager;
+
     // Start is called before the first frame update
     void Start()
     {
         player = FindAnyObjectByType<PlayerMovements>();
+        levelUpManager = FindAnyObjectByType<LevelUpManager>();
+        textPageManager = FindAnyObjectByType<TextPageManager>();
+        Invoke("GameStart", 0);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void GameStart()
     {
-        
+        // 存档点3
+        if (TextPageManager.StageThreeExplain)
+        {
+
+        }
+        // 存档点2
+        else if (TextPageManager.StageTwoExplain)
+        {
+            Debug.Log("从华夏鳗鱼开始");
+            TextPageManager.StageTwoExplain = true;
+            levelUpManager.TailNotochord();
+        }
+        // 正常从头开始游戏
+        else
+        {
+            if (!TextPageManager.GameStartExplain)
+            {
+                Debug.Log("Show game star explain");
+                textPageManager.ShowExplain();
+            }
+        }
     }
 
     void ShowEndScreenView(string imageLocation, string textInformation)
@@ -34,6 +65,8 @@ public class GameManager : MonoBehaviour
 
     void ShowEndScreen()
     {
+        currentPageNumber = 0;
+        ShowNextPage();
         StartCoroutine(SmoothMoveCoroutine(1080, 0));
     }
 
@@ -58,59 +91,142 @@ public class GameManager : MonoBehaviour
         EndScenePanel.transform.localPosition = targetPosition;
     }
 
-    public void SetUpleaveButton()
+    // 切换到下一页的方法
+    void ShowNextPage()
     {
-        TextMeshProUGUI buttonText = EndSceneButton.GetComponentInChildren<TextMeshProUGUI>();
-        buttonText.text = "Try Again";
-        EndSceneButton.onClick.AddListener(BackToMainMenu);
+        if (currentPageNumber < currentPages.Length)
+        {
+            ShowEndScreenView(currentImagePages[currentPageNumber], currentPages[currentPageNumber]);
+
+            // 如果当前是最后一页同时是结局，那把按钮改成重来
+            if ((currentPageNumber == currentPages.Length - 1) && (endingScene))
+            {
+                EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "try again";
+                EndSceneButton.onClick.AddListener(TryAgain);
+            }
+            else
+            {
+                EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "next";
+                EndSceneButton.onClick.AddListener(ShowNextPage);
+            }
+
+            currentPageNumber++;
+        }
+        else
+        {
+            // 如果已经是最后一页，可以在这里执行一些额外的逻辑，比如关闭对话框等
+            Debug.Log("已到最后一页");
+        }
     }
 
-    void BackToMainMenu()
+    void TryAgain()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene("MenuScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // 结局1 
     public void EndingOne()
     {
-        StartCoroutine(EndingOneHelper(5f));
+        endingScene = true;
+        StartCoroutine(EndingOneHelper());
     }
 
-    public void EndingOneHelper()
-    {
-        ShowEndScreenView("EndSceneImage/end1", "Perhaps avoiding the enlargement " +
-            "of the head is another possible evolutionary path.");
-        SetUpleaveButton();
-    }
-
-    private IEnumerator EndingOneHelper(float time)
+    private IEnumerator EndingOneHelper()
     {
         player.ChangeSpeed(0.5f);
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
         player.StopMoving();
         Rigidbody2D rb = player.gameObject.GetComponent<Rigidbody2D>();
         rb.gravityScale = 1;
 
-        yield return new WaitForSeconds(time);  // Wait for the specified time
+        yield return new WaitForSeconds(3);  // Wait for the specified time
 
+        // 加载结局
+        currentPages = EndOneText;
+        currentImagePages = EndOneImage;
         ShowEndScreen();
-        ShowEndScreenView("EndSceneImage/end1", "Due to the excessively large " +
-            "filter-feeding holes in your head, you gradually realize that your " +
-            "species is unable to swim in the ocean. Eventually, you settle on " +
-            "the seafloor to filter-feed, becoming what would later evolve into " +
-            "echinoderms (such as starfish).");
-        EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "next";
-        EndSceneButton.onClick.AddListener(EndingOneHelper);
     }
 
     // 结局2
+    public void EndingTwo()
+    {
+        endingScene = true;
+        StartCoroutine(EndingTwoHelper());
+    }
+
+    private IEnumerator EndingTwoHelper()
+    {
+        yield return new WaitForSeconds(3f);
+
+        player.StopMoving();
+        Rigidbody2D rb = player.gameObject.GetComponent<Rigidbody2D>();
+        rb.gravityScale = 1;
+
+        yield return new WaitForSeconds(3f);  // Wait for the specified time
+
+        // 加载结局
+        currentPages = EndTwoText;
+        currentImagePages = EndTwoImage;
+        ShowEndScreen();
+    }
+
+    // 结局1文本
+    public string[] EndOneText = new string[] {
+        "Due to the excessively large filter-feeding holes in your head, you gradually " +
+        "realize that your species is unable to swim in the ocean. Eventually, you settle on " +
+            "the seafloor to filter-feed, becoming what would later evolve into echinoderms (such as starfish).",
+
+        "Perhaps avoiding the enlargement of the head is another possible evolutionary path."
+    };
+    public string[] EndOneImage = new string[] {
+        "EndSceneImage/end1",
+        "EndSceneImage/end1",
+    };
+
+    // 结局2
+    public string[] EndTwoText = new string[] {
+        "第一",
+        "第二",
+    };
+
+    public string[] EndTwoImage = new string[] {
+        "第一",
+        "第二",
+    };
 
     // 结局3
+    public string[] EndThreeText = new string[] {
+        "第一",
+        "第二",
+    };
+
+    public string[] EndThreeImage = new string[] {
+        "第一",
+        "第二",
+    };
 
     // 结局4
+    public string[] EndFourText = new string[] {
+        "第一",
+        "第二",
+    };
 
-    // 结局5（真）
+    public string[] EndFourImage = new string[] {
+        "第一",
+        "第二",
+    };
+
+    // 结局5
+    public string[] EndFiveText = new string[] {
+        "第一",
+        "第二",
+    };
+
+    public string[] EndFiveImage = new string[] {
+        "第一",
+        "第二",
+    };
 }

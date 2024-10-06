@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject nutrientPrefab; // The nutrient prefab
+    public GameObject seaFloorNutrientPrefab; // The nutrient prefab
     private float spawnInterval = 2f;  // Time between spawns
     private float seaSurface = 4f;     // Sea surface boundary (y-axis)
     private float seaFloor = -2f;      // Sea floor boundary (y-axis)

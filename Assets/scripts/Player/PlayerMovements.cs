@@ -83,4 +83,9 @@ public class PlayerMovements : MonoBehaviour
         Debug.Log("Now moving in speed :" + newSpeed);
     }
 
+
+    public void ChangeSprite(int index)
+    {
+        animator.SetInteger("AnimationInt", index);
+    }
 }

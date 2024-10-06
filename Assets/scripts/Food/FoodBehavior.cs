@@ -6,13 +6,13 @@ public class FoodBehavior : MonoBehaviour
 {
     Transform player;
 
-    private float distance = 25f;
+    private float distance = 40f;
     private float interval = 3f;
     private float moveInterval = 1f;
     private float moveSpeed = 0.5f; // Adjust speed as necessary
     private Vector2 moveDirection;
 
-
+    public bool isSeaFloor;
     // Start is called before the first frame update
     void Start()
     {
