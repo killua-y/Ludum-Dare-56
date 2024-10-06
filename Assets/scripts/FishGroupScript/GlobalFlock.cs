@@ -6,13 +6,22 @@ public class GlobalFlock : MonoBehaviour
 {
     public GameObject fishPrefab;         // The prefab for the fish
     public GameObject goalPrefab;         // Optional visual goal (e.g., a 2D sprite) to see the goal position
-    public static float tankSize = 5f;    // Size of the tank in which the fish will swim (2D)
+    public float tankSize = 5f;    // Size of the tank in which the fish will swim (2D)
     public static Vector2 goalPos = Vector2.zero; // Global position the fish are trying to reach (2D)
+
+    private float distance = 50f;
 
     public int numFish = 10;              // Number of fish to spawn
     public static GameObject[] allFish;   // Array to hold references to all the fish
 
+    PlayerMovements playerMovements;
+
     void Start()
+    {
+        StartFishFlock();
+    }
+
+    public void StartFishFlock()
     {
         allFish = new GameObject[numFish]; // Initialize the array with the size of numFish
 
@@ -22,17 +31,32 @@ public class GlobalFlock : MonoBehaviour
             Vector2 pos = new Vector2(
                 Random.Range(-tankSize, tankSize),
                 Random.Range(-tankSize, tankSize)
-            );
+            ) + (Vector2)this.transform.position;
             allFish[i] = (GameObject)Instantiate(fishPrefab, pos, Quaternion.identity);
         }
 
+        playerMovements = FindAnyObjectByType<PlayerMovements>();
+
         // Set the initial goal position
-        goalPos = this.transform.position;
+        goalPos = playerMovements.transform.position;
+    }
+
+    void EndFishEvent()
+    {
+        foreach (GameObject fish in allFish)
+        {
+            Destroy(fish);
+        }
     }
 
     void Update()
     {
-        goalPos = goalPrefab.transform.position;
+        goalPos = playerMovements.transform.position;
+
+        if (Vector2.Distance(playerMovements.transform.position, this.transform.position) >= distance)
+        {
+            EndFishEvent();
+        }
         //// Occasionally (random chance) update the goal position within the bounds of the tank
         //if (Random.Range(0, 10000) < 50)
         //{

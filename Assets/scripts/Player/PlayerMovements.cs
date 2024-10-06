@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class PlayerMovements : MonoBehaviour
 {
     private float moveSpeed = 5f; // Speed of player movement
     public int point;
-    public TextMeshProUGUI foodText;
     public Vector2 movingDrection;
+    public float rotationSpeed = 100f; // Speed of rotation
+
+    LevelUpManager levelUpManager;
 
     private void Start()
     {
+        levelUpManager = FindAnyObjectByType<LevelUpManager>();
     }
 
     void Update()
@@ -33,18 +35,20 @@ public class PlayerMovements : MonoBehaviour
         // Calculate the final direction
         Vector2 direction = movingDrection;
 
-        // Calculate the rotation angle
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        // Calculate the target rotation based on direction
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
 
-        // Update fish flock rotation and movement
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        // Smoothly rotate towards the target direction
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        // Move the player in the final direction
         transform.position += (Vector3)direction * moveSpeed * Time.deltaTime;
     }
 
     public void eat()
     {
         point += 1;
-        foodText.text = "point: " + point;
+        levelUpManager.eat();
     }
-
 }

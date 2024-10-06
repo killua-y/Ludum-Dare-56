@@ -8,7 +8,8 @@ public class SpawnManager : MonoBehaviour
     private float spawnInterval = 2f;  // Time between spawns
     private float seaSurface = 4f;     // Sea surface boundary (y-axis)
     private float seaFloor = -2f;      // Sea floor boundary (y-axis)
-    private float minSpawnDistance = 1f; // Minimum distance between nutrients
+    private float minSpawnDistance = 2f; // Minimum distance between nutrients
+    private int maxSpwanObject = 30;
 
     private List<GameObject> existingNutrients = new List<GameObject>(); // Track existing nutrients
     private Camera cam;
@@ -24,8 +25,23 @@ public class SpawnManager : MonoBehaviour
     {
         while (true)
         {
-            SpawnNutrient();
-            yield return new WaitForSeconds(spawnInterval);
+            if (existingNutrients.Count < maxSpwanObject)
+            {
+                SpawnNutrient();
+            }
+
+            if (existingNutrients.Count <= 5)
+            {
+                yield return new WaitForSeconds(spawnInterval / 4);
+            }
+            else if (existingNutrients.Count <= 10)
+            {
+                yield return new WaitForSeconds(spawnInterval / 2);
+            }
+            else
+            {
+                yield return new WaitForSeconds(spawnInterval);
+            }
         }
     }
 

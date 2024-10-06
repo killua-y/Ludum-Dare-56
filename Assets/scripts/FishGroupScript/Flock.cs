@@ -6,19 +6,22 @@ public class Flock : MonoBehaviour
 {
     public float speed = 1f;           // Speed of the fish
     public float rotationSpeed = 2.0f;   // How fast the fish rotates in 2D
-    public float neighborDistance = 5f; // Distance to consider other fish as neighbors
-    public float avoidanceDistance = 0.5f; // Distance to avoid other fish
+    public float neighborDistance = 3.0f; // Distance to consider other fish as neighbors
+    public float avoidanceDistance = 1.0f; // Distance to avoid other fish
     public bool turning = false;         // Are we turning around the boundary of the tank?
 
+    GlobalFlock globalFlock;
     void Start()
     {
         speed = Random.Range(0.5f, 1.0f); // Each fish will have a slightly different speed
+
+        globalFlock = FindAnyObjectByType<GlobalFlock>();
     }
 
     void Update()
     {
         // Check if the fish is about to leave the boundary of the tank (2D check)
-        if (Vector2.Distance(transform.position, Vector2.zero) >= GlobalFlock.tankSize)
+        if (Vector2.Distance(transform.position, globalFlock.transform.position) >= globalFlock.tankSize)
         {
             turning = true;
         }
