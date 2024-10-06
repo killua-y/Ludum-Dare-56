@@ -11,6 +11,8 @@ public class PlayerMovements : MonoBehaviour
 
     LevelUpManager levelUpManager;
 
+    private bool canMove = true;
+
     private void Start()
     {
         levelUpManager = FindAnyObjectByType<LevelUpManager>();
@@ -18,32 +20,35 @@ public class PlayerMovements : MonoBehaviour
 
     void Update()
     {
-        // WASD controls for fish flock movement
-        float horizontal = Input.GetAxis("Horizontal"); // A/D keys for horizontal movement
-        float vertical = Input.GetAxis("Vertical");     // W/S keys for vertical movement
-
-        Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
-
-        // If no input is given, continue moving in the last direction
-        if (inputDirection.magnitude == 0)
+        if (canMove)
         {
-            inputDirection = transform.up;
+            // WASD controls for fish flock movement
+            float horizontal = Input.GetAxis("Horizontal"); // A/D keys for horizontal movement
+            float vertical = Input.GetAxis("Vertical");     // W/S keys for vertical movement
+
+            Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
+
+            // If no input is given, continue moving in the last direction
+            if (inputDirection.magnitude == 0)
+            {
+                inputDirection = transform.up;
+            }
+
+            movingDrection = inputDirection;
+
+            // Calculate the final direction
+            Vector2 direction = movingDrection;
+
+            // Calculate the target rotation based on direction
+            float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+
+            // Smoothly rotate towards the target direction
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            // Move the player in the final direction
+            transform.position += (Vector3)direction * moveSpeed * Time.deltaTime;
         }
-
-        movingDrection = inputDirection;
-
-        // Calculate the final direction
-        Vector2 direction = movingDrection;
-
-        // Calculate the target rotation based on direction
-        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
-        Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-
-        // Smoothly rotate towards the target direction
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-        // Move the player in the final direction
-        transform.position += (Vector3)direction * moveSpeed * Time.deltaTime;
     }
 
     public void eat()
@@ -51,4 +56,29 @@ public class PlayerMovements : MonoBehaviour
         point += 1;
         levelUpManager.eat();
     }
+
+    public void StopMoving()
+    {
+        canMove = false;
+    }
+
+    // 调用此函数来改变物体大小
+    public void ResizeSpriteAndCollider(Vector2 Scale)
+    {
+        // 调整物体的缩放比例
+        transform.localScale = Scale;
+
+        CircleCollider2D boxCollider = GetComponent<CircleCollider2D>();
+        // 更新 Box Collider 的大小以保持碰撞检测一致
+        //Vector3 newSize = new Vector3(Scale.x, Scale.y, 1);
+        //boxCollider.radius = Scale.x;
+    }
+
+    // 改变游泳速度
+    public void ChangeSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed;
+        Debug.Log("Now moving in speed :" + newSpeed);
+    }
+
 }

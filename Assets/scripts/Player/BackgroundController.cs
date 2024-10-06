@@ -13,9 +13,9 @@ public class BackgroundController : MonoBehaviour
     private void Update()
     {
         // Limit the player's Y position between seaSurface and seaFloor
-        Vector3 playerPos = player.position;
-        playerPos.y = Mathf.Clamp(playerPos.y, seaFloor, seaSurface);
-        player.position = playerPos;
+        //Vector3 playerPos = player.position;
+        //playerPos.y = Mathf.Clamp(playerPos.y, seaFloor, seaSurface);
+        //player.position = playerPos;
 
         // Check if the player reaches the leftmost image
         if (player.position.x < seaImages[0].position.x + imageWidth / 2)
