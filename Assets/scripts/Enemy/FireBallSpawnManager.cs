@@ -7,6 +7,8 @@ public class FireBallSpawnManager : MonoBehaviour
     public GameObject fireballPrefab; // Assign the fireball prefab in the inspector
     public Transform player; // Assign the player's transform in the inspector
     public float spawnInterval = 1.0f; // Adjust the spawn interval as needed
+    public float speed = 0.5f; // Control the falling speed of the fireballs
+    private float destroyTime = 5f;
 
     void Start()
     {
@@ -28,6 +30,9 @@ public class FireBallSpawnManager : MonoBehaviour
             // Instantiate the fireball prefab at the spawn position with no rotation
             GameObject fireball = Instantiate(fireballPrefab, spawnPosition, Quaternion.identity);
 
+            // Destroy the fireball after a set time to avoid clutter
+            Destroy(fireball, destroyTime);
+
             // Add a Rigidbody2D to the fireball if it doesn't have one already
             Rigidbody2D rb = fireball.GetComponent<Rigidbody2D>();
             if (rb == null)
@@ -42,21 +47,21 @@ public class FireBallSpawnManager : MonoBehaviour
             switch (fallDirection)
             {
                 case 0: // Straight down
-                    fallVelocity = new Vector2(0f, -5f);
+                    fallVelocity = new Vector2(0f, -1f);
                     break;
                 case 1: // Slightly left
-                    fallVelocity = new Vector2(-2f, -5f);
+                    fallVelocity = new Vector2(-0.5f, -1f);
                     break;
                 case 2: // Slightly right
-                    fallVelocity = new Vector2(2f, -5f);
+                    fallVelocity = new Vector2(0.5f, -1f);
                     break;
                 default:
-                    fallVelocity = new Vector2(0f, -5f);
+                    fallVelocity = new Vector2(0f, -1f);
                     break;
             }
 
-            // Apply the velocity to the fireball
-            rb.velocity = fallVelocity;
+            // Apply the speed multiplier to control the falling speed
+            rb.velocity = fallVelocity * speed;
 
             // Wait for the specified interval before spawning the next fireball
             yield return new WaitForSeconds(spawnInterval);

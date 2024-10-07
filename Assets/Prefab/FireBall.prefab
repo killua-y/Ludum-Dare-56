@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4784679661572742828}
   - component: {fileID: 1572817065259036850}
   - component: {fileID: 5888936321764979143}
+  - component: {fileID: -3718255943678016255}
   m_Layer: 0
   m_Name: FireBall
   m_TagString: Untagged
@@ -101,3 +102,15 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &-3718255943678016255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8274794692530266217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c00059a140d40ea98fcd93fda7914b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -91,7 +91,6 @@ public class PlayerMovements : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Collide with something");
         // Check if the enemy collided with the player
         if (collision.gameObject.CompareTag("Enemy"))
         {
