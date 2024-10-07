@@ -11,7 +11,7 @@ public class GlobalFlock : MonoBehaviour
 
     private float distance = 50f;
 
-    public int numFish = 10;              // Number of fish to spawn
+    private int numFish = 5;              // Number of fish to spawn
     public static GameObject[] allFish;   // Array to hold references to all the fish
 
     PlayerMovements playerMovements;
@@ -19,6 +19,7 @@ public class GlobalFlock : MonoBehaviour
     void Start()
     {
         StartFishFlock();
+        Destroy(this.gameObject, 8f);
     }
 
     public void StartFishFlock()
@@ -30,15 +31,18 @@ public class GlobalFlock : MonoBehaviour
         {
             Vector2 pos = new Vector2(
                 Random.Range(-tankSize, tankSize),
-                Random.Range(-tankSize, tankSize)
+                Random.Range(-5, 5)
             ) + (Vector2)this.transform.position;
             allFish[i] = (GameObject)Instantiate(fishPrefab, pos, Quaternion.identity);
+            allFish[i].GetComponent<Flock>().globalFlock = this;
+
+            Destroy(allFish[i], 8f);
         }
 
         playerMovements = FindAnyObjectByType<PlayerMovements>();
 
         // Set the initial goal position
-        goalPos = playerMovements.transform.position;
+        goalPos = this.transform.position;
     }
 
     void EndFishEvent()

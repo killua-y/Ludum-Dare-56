@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMovements : MonoBehaviour
 {
     private float moveSpeed = 5f; // Speed of player movement
+    private float scaleFactor = 1;
     public int point;
     public Vector2 movingDrection;
     public float rotationSpeed = 100f; // Speed of rotation
@@ -29,6 +30,18 @@ public class PlayerMovements : MonoBehaviour
             float vertical = Input.GetAxis("Vertical");     // W/S keys for vertical movement
 
             Vector2 inputDirection = new Vector2(horizontal, vertical).normalized;
+
+            // Flip the player on the Y axis when pressing A or D
+            if (horizontal < 0)
+            {
+                // Flip to face left when pressing A
+                transform.localScale = new Vector3(-1 * scaleFactor, 1 * scaleFactor, 1);
+            }
+            else if (horizontal > 0)
+            {
+                // Flip back to face right when pressing D
+                transform.localScale = new Vector3(1 * scaleFactor, 1 * scaleFactor, 1);
+            }
 
             // If no input is given, continue moving in the last direction
             if (inputDirection.magnitude == 0)
@@ -68,12 +81,8 @@ public class PlayerMovements : MonoBehaviour
     public void ResizeSpriteAndCollider(Vector2 Scale)
     {
         // 调整物体的缩放比例
-        transform.localScale = Scale;
-
-        CircleCollider2D boxCollider = GetComponent<CircleCollider2D>();
-        // 更新 Box Collider 的大小以保持碰撞检测一致
-        //Vector3 newSize = new Vector3(Scale.x, Scale.y, 1);
-        //boxCollider.radius = Scale.x;
+        scaleFactor = Scale.x;
+        transform.localScale = new Vector3(1 * scaleFactor, 1 * scaleFactor, 1);
     }
 
     // 改变游泳速度

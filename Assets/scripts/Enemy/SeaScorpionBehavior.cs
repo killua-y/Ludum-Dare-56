@@ -8,7 +8,7 @@ public class SeaScorpionBehavior : MonoBehaviour
     private float DestoryDistance = 40f;
     private float detectionRadius = 6f; // Radius to detect the player
     private float jumpForce = 10f; // Force applied when jumping towards the player
-    private float jumpDelay = 1f; // Time to wait before jumping towards the player
+    private float jumpDelay = 0.6f; // Time to wait before jumping towards the player
     private float jumpCoolDown = 3f;
     private float directionChangeTimeMin = 1f; // Minimum time before changing direction
     private float directionChangeTimeMax = 2f; // Maximum time before changing direction
@@ -20,6 +20,8 @@ public class SeaScorpionBehavior : MonoBehaviour
     private Vector2 walkDirection;
     private bool isJumping;
     private Animator animator;
+
+    public GameObject IndicationSprite;
 
     void Start()
     {
@@ -87,7 +89,9 @@ public class SeaScorpionBehavior : MonoBehaviour
     private IEnumerator JumpToPlayer()
     {
         isJumping = true;
+        IndicationSprite.gameObject.SetActive(true);
         yield return new WaitForSeconds(jumpDelay);
+        IndicationSprite.gameObject.SetActive(false);
         animator.SetBool("AnimationBool", true);
 
         // Calculate the direction towards the player and jump

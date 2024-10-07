@@ -21,6 +21,9 @@ public class GameManager : MonoBehaviour
     private bool endingScene = false;
     private bool EndingFiveBool = false;
 
+    public Button NextButton;
+    public Button TryAgainButton;
+
     LevelUpManager levelUpManager;
     TextPageManager textPageManager;
 
@@ -61,6 +64,14 @@ public class GameManager : MonoBehaviour
 
     void ShowEndScreenView(string imageLocation, string textInformation)
     {
+        if (EndingFiveBool)
+        {
+            FindAnyObjectByType<SoundManager>().PlayTrueEndingBGM();
+        }
+        else
+        {
+            FindAnyObjectByType<SoundManager>().PlayFailBGM();
+        }
         endSceneImage.sprite = Resources.Load<Sprite>(imageLocation);
         endSceneText.text = textInformation;
     }
@@ -97,6 +108,7 @@ public class GameManager : MonoBehaviour
     // 切换到下一页的方法
     void ShowNextPage()
     {
+        FindAnyObjectByType<SoundManager>().PlaySound(2, 0);
         if (currentPageNumber < currentPages.Length)
         {
             ShowEndScreenView(currentImagePages[currentPageNumber], currentPages[currentPageNumber]);
@@ -106,19 +118,25 @@ public class GameManager : MonoBehaviour
             {
                 if (EndingFiveBool)
                 {
-                    EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Thank You";
-                    EndSceneButton.onClick.AddListener(BackToMainMenu);
+                    NextButton.gameObject.SetActive(true);
+                    TryAgainButton.gameObject.SetActive(false);
+                    NextButton.onClick.RemoveAllListeners();
+                    NextButton.onClick.AddListener(BackToMainMenu);
                 }
                 else
                 {
-                    EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "try again";
-                    EndSceneButton.onClick.AddListener(TryAgain);
+                    NextButton.gameObject.SetActive(false);
+                    TryAgainButton.gameObject.SetActive(true);
+                    NextButton.onClick.RemoveAllListeners();
+                    TryAgainButton.onClick.AddListener(TryAgain);
                 }
             }
             else
             {
-                EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "next";
-                EndSceneButton.onClick.AddListener(ShowNextPage);
+                NextButton.gameObject.SetActive(true);
+                TryAgainButton.gameObject.SetActive(false);
+                NextButton.onClick.RemoveAllListeners();
+                NextButton.onClick.AddListener(ShowNextPage);
             }
 
             currentPageNumber++;
@@ -128,6 +146,8 @@ public class GameManager : MonoBehaviour
             // 如果已经是最后一页，可以在这里执行一些额外的逻辑，比如关闭对话框等
             Debug.Log("已到最后一页");
         }
+        NextButton.interactable = false;
+        NextButton.interactable = true;
     }
 
     void TryAgain()
@@ -279,25 +299,26 @@ public class GameManager : MonoBehaviour
 
     // 结局1文本
     private string[] EndOneText = new string[] {
-        "Due to the excessively large filter-feeding holes in your head, you gradually " +
-        "realize that your species is unable to swim in the ocean. Eventually, you settle on " +
-            "the seafloor to filter-feed, becoming what would later evolve into echinoderms (such as starfish).",
-
+        "Due to the excessively large filter-feeding holes in your head, you gradually realize that your species is unable to swim in the ocean.",
+        "Eventually, you settle on the seafloor to filter-feed, becoming what would later evolve into echinoderms (such as starfish).",
         "Perhaps avoiding the enlargement of the head is another possible evolutionary path."
     };
     private string[] EndOneImage = new string[] {
+        "EndSceneImage/End1_1",
         "EndSceneImage/End1_1",
         "EndSceneImage/End1_2",
     };
 
     // 结局2
     private string[] EndTwoText = new string[] {
-        "The notochord was a great help for swimming, but your group of chordates chose to extend the notochord all the way to the head, preventing the development of a brain.",
+        "The notochord was a great help for swimming",
+        "but your group of chordates chose to extend the notochord all the way to the head, preventing the development of a brain.",
         "By doing this, you closed off future possibilities and became a new branch called cephalochordates. The lancelet is one of your descendants.",
         "Although a faster swimming speed is tempting, keeping the notochord in the back half of the body might be a better choice.",
     };
 
     private string[] EndTwoImage = new string[] {
+        "EndSceneImage/End2_1",
         "EndSceneImage/End2_1",
         "EndSceneImage/End2_2",
         "EndSceneImage/End2_3",
@@ -306,11 +327,13 @@ public class GameManager : MonoBehaviour
     // 结局3
     private string[] EndThreeText = new string[] {
         "With a wider field of vision, you discovered that most nutrients in the early Cambrian seas were concentrated near the ocean floor.",
-        "Your group of chordates gradually chose to reduce their nerve and movement abilities, attaching themselves to the seabed to filter-feed from the water. This is how you became tunicates. ",
-        "Perhaps moving away from the ocean floor and continuing to explore the potential of the nervous system is a more promising evolutionary path for the future",
+        "Your group of chordates gradually chose to reduce their nerve and movement abilities, attaching themselves to the seabed to filter-feed from the water.",
+        "This is how you became tunicates. ",
+        "Perhaps moving away from the ocean floor and continuing to explore the potential of the nervous system is a more promising evolutionary path",
     };
 
     private string[] EndThreeImage = new string[] {
+        "EndSceneImage/End3_1",
         "EndSceneImage/End3_1",
         "EndSceneImage/End3_2",
         "EndSceneImage/End3_3",
@@ -318,11 +341,13 @@ public class GameManager : MonoBehaviour
 
     // 结局4
     private string[] EndFourText = new string[] {
-        "Evolution is often this cruel—choosing the right path doesn’t guarantee survival, as natural disasters and predators are always lurking. As Earth faced its first mass extinction, the Late Ordovician extinction, your group of chordates also became a part of history.",
+        "Evolution is often this cruel—choosing the right path doesn’t guarantee survival, as natural disasters and predators are always lurking.",
+        "As Earth faced its first mass extinction, the Late Ordovician extinction, your group of chordates also became a part of history.",
         "But life finds a way, and evolution continues on.",
     };
 
     private string[] EndFourImage = new string[] {
+        "EndSceneImage/End4_1",
         "EndSceneImage/End4_1",
         "EndSceneImage/End4_1",
     };
@@ -330,21 +355,33 @@ public class GameManager : MonoBehaviour
     // 结局5
     private string[] EndFiveText = new string[] {
         "After surviving the Late Ordovician mass extinction, the once-small worm-like creatures began to reveal their true potential on the evolutionary path.",
-        "Finally, your small group of chordates made it to the end of this path of freedom, evolving into vertebrates. In the mid-early Cambrian period, only three fossil types were found in small quantities, showing just how rare it was for deuterostomes to reach the end of this road.",
+        "Finally, your small group of chordates made it to the end of this path of freedom, evolving into vertebrates.",
+        "In the mid-early Cambrian period, only three fossil types were found in small quantities, showing just how rare it was for deuterostomes to reach the end of this road.",
         "At this time, the nervous systems of most other animals were improved versions of a nerve net, making it difficult for them to adapt to bilaterally symmetrical body structures.",
-        "But your group of chordates, after what seemed like a series of blind struggles, essentially built a new nervous system from scratch—one that was highly adapted to a symmetrical body.",
-        "Following this, your vertebrate group evolved bones that were both strong and lightweight. You also deeply improved the nervous system, evolving myelin sheaths, marking a new era in the speed of nerve transmission.",
+        "But your group of chordates, after what seemed like a series of blind struggles, essentially built a new nervous system from scratch.",
+        "Following this, your vertebrate group evolved bones that were both strong and lightweight.",
+        "You also deeply improved the nervous system, evolving myelin sheaths, marking a new era in the speed of nerve transmission.",
         "Finally, vertebrates evolved jaws, leading to the emergence of jawed fish.",
-        "Once upon a time, trilobites reigned supreme, sea scorpions perfected their limb adaptations, and the cephalopods were on the rise. But no one could have imagined that the seemingly harmless little worms had already undergone a complete bodily revolution. While your rivals might have reached the middle of their game, you have only just begun. But remember, we’re not even playing on the same board.",
+        "Once upon a time, trilobites reigned supreme, sea scorpions perfected their limb adaptations, and the cephalopods were on the rise.",
+        "But no one could have imagined that the seemingly harmless little worms had already undergone a complete bodily revolution.",
+        "While your rivals might have reached the middle of their game, you have only just begun. But remember, we’re not even playing on the same board.",
+        "At this moment, this vertebrate has evolved into us—a creation shaped by billions of years of evolution.",
+        "Amazingly, we are able to understand those billions of years and share that understanding through games. It’s truly wonderful"
     };
 
     private string[] EndFiveImage = new string[] {
         "EndSceneImage/End5_2",
         "EndSceneImage/End5_2",
+        "EndSceneImage/End5_2",
         "EndSceneImage/End5_1",
         "EndSceneImage/End5_1",
         "EndSceneImage/End5_3",
         "EndSceneImage/End5_3",
         "EndSceneImage/End5_3",
+        "EndSceneImage/End5_3",
+        "EndSceneImage/End5_3",
+        "EndSceneImage/End5_3",
+        "EndSceneImage/End5_4",
+        "EndSceneImage/End5_4",
     };
 }

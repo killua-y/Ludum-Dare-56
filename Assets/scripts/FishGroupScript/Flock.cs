@@ -10,12 +10,10 @@ public class Flock : MonoBehaviour
     public float avoidanceDistance = 1.0f; // Distance to avoid other fish
     public bool turning = false;         // Are we turning around the boundary of the tank?
 
-    GlobalFlock globalFlock;
+    public GlobalFlock globalFlock;
     void Start()
     {
         speed = Random.Range(0.5f, 1.0f); // Each fish will have a slightly different speed
-
-        globalFlock = FindAnyObjectByType<GlobalFlock>();
     }
 
     void Update()

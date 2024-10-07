@@ -27,8 +27,8 @@ public class FireBallSpawnManager : MonoBehaviour
             // Define the spawn position
             Vector2 spawnPosition = new Vector2(xPosition, yPosition);
 
-            // Instantiate the fireball prefab at the spawn position with no rotation
-            GameObject fireball = Instantiate(fireballPrefab, spawnPosition, Quaternion.identity);
+            // Instantiate the fireball prefab at the spawn position with a rotation of (0, 0, -90)
+            GameObject fireball = Instantiate(fireballPrefab, spawnPosition, Quaternion.Euler(0, 0, -90));
 
             // Destroy the fireball after a set time to avoid clutter
             Destroy(fireball, destroyTime);

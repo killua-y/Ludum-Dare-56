@@ -66,19 +66,10 @@ public class TextPageManager : MonoBehaviour
     // 切换到下一页的方法
     public void ShowNextPage()
     {
+        FindAnyObjectByType<SoundManager>().PlaySound(2, 0);
         if (currentPageNumber < currentPages.Length)
         {
             Updatetext(currentImagePages[currentPageNumber], currentPages[currentPageNumber]);
-
-            // 如果当前是最后一页，那把按钮改成结束
-            if (currentPageNumber == currentPages.Length - 1)
-            {
-                EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Finish";
-            }
-            else
-            {
-                EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "next";
-            }
 
             currentPageNumber++;
         }
@@ -88,6 +79,8 @@ public class TextPageManager : MonoBehaviour
             Time.timeScale = 1;
             NarrationPanel.SetActive(false);
         }
+        EndSceneButton.interactable = false;
+        EndSceneButton.interactable = true;
     }
 
     // 科普1

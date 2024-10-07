@@ -39,6 +39,8 @@ public class LevelUpManager : MonoBehaviour
 
     public void EatSeaFloorFood()
     {
+        totalPoints += 1;
+        foodText.text = "nutrients: " + totalPoints;
         SeaFloorFoodCounter += 1;
         CheckProgress();
     }
@@ -66,10 +68,11 @@ public class LevelUpManager : MonoBehaviour
 
     private void CheckProgress()
     {
+
         // 如果升级口部就注定会是结局1
         if (currentState == EvolutionaryStages.MouthPath)
         {
-            if (totalPoints >= 30 && !hasMouthLevelTwoUpgradeTriggered)
+            if (totalPoints >= 6 && !hasMouthLevelTwoUpgradeTriggered)
             {
                 hasMouthLevelTwoUpgradeTriggered = true;
                 NewEvolvetraits();
@@ -104,17 +107,20 @@ public class LevelUpManager : MonoBehaviour
             AddLevelUpOption("Extend the notochord to the head (Significantly enhance movement speed)", WholeBodyNotochord, true);
         }
         // 演化大脑，挤占结局2选项
-        else if (totalPoints == 50)
+        else if (totalPoints == 50 && currentState != EvolutionaryStages.BrainAndEye)
         {
             HeadButton.gameObject.SetActive(false);
 
             NewEvolvetraits();
+            HeadButton.gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("OtherImage/Brain");
             AddLevelUpOption("Evolve Brain", evolveBrain, true);
         }
         // 抵抗住了海底的诱惑，前提是进化了大脑才能开始计数
-        else if (pointsAfterBrain == 4)
+        else if (pointsAfterBrain == 10)
         {
             Debug.Log("触发奥陶纪大灭绝");
+            GenerateExplainText("Ordovician extinction", 2f);
+            FindAnyObjectByType<SoundManager>().PlayFinalBGM();
             FindAnyObjectByType<NutrientSpawner>().gameObject.SetActive(false);
             // 奥陶纪大灭绝
             Enemy.gameObject.SetActive(true);
@@ -122,7 +128,7 @@ public class LevelUpManager : MonoBehaviour
         }
 
         // 没能抵抗住诱惑
-        if (SeaFloorFoodCounter == 5)
+        if (SeaFloorFoodCounter == 10)
         {
             gameManager.EndingThree();
         }
@@ -174,9 +180,16 @@ public class LevelUpManager : MonoBehaviour
         button.gameObject.SetActive(false);
     }
 
+    private void GenerateEffect()
+    {
+        FindAnyObjectByType<SoundManager>().PlaySound(3, 0);
+        FindAnyObjectByType<EffectManager>().PlayEffect(1, player.transform.position, 0.7f);
+    }
+
     // 升级滤食口1
     private void MouthLeveloneUp()
     {
+        GenerateEffect();
         Debug.Log("Level up month");
         player.ResizeSpriteAndCollider(new Vector2(1.5f, 1.5f));
         currentState = EvolutionaryStages.MouthPath;
@@ -185,6 +198,7 @@ public class LevelUpManager : MonoBehaviour
     // 升级滤食口2，引导向结局1
     private void MouthLeveltwoUp()
     {
+        GenerateEffect();
         Debug.Log("Level up month");
         player.ResizeSpriteAndCollider(new Vector2(2f, 2f));
         GenerateExplainText("As the filter-feeding mouth enlarges, swimming becomes more difficult.", 3f);
@@ -194,6 +208,7 @@ public class LevelUpManager : MonoBehaviour
     // 升级脊索1
     public void TailNotochord()
     {
+        GenerateEffect();
         player.ChangeSpeed(7);
         player.ChangeSprite(1);
         StageOneImage.SetActive(false);
@@ -204,11 +219,14 @@ public class LevelUpManager : MonoBehaviour
         {
             textPageManager.ShowExplain();
         }
+
+        Debug.Log("Show explain");
     }
 
     // 升级脊索至头部,结局2
     private void WholeBodyNotochord()
     {
+        GenerateEffect();
         player.ChangeSpeed(9);
         gameManager.EndingTwo();
     }
@@ -216,6 +234,7 @@ public class LevelUpManager : MonoBehaviour
     // 演化大脑
     public void evolveBrain()
     {
+        GenerateEffect();
         pointsAfterBrain = 0;
         currentState = EvolutionaryStages.BrainAndEye;
         player.ChangeSpeed(7);

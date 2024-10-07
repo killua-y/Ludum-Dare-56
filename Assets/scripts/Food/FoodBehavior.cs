@@ -8,8 +8,8 @@ public class FoodBehavior : MonoBehaviour
 
     private float distance = 40f;
     private float interval = 3f;
-    private float moveInterval = 1f;
-    private float moveSpeed = 0.5f; // Adjust speed as necessary
+    public float moveInterval = 1f;
+    public float moveSpeed = 0.5f; // Adjust speed as necessary
     private Vector2 moveDirection;
 
     public bool isSeaFloor;
@@ -39,7 +39,7 @@ public class FoodBehavior : MonoBehaviour
         {
             // Choose a random direction (normalized to prevent diagonal speed increase)
             moveDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-            // Move in that direction for 0.2 seconds
+            // Move in that direction for a specified interval
             yield return new WaitForSeconds(moveInterval);
         }
     }
@@ -48,6 +48,18 @@ public class FoodBehavior : MonoBehaviour
     {
         // Apply movement in the chosen direction
         transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+
+        // Check if the object is moving outside the y-bounds of -5 and +5
+        if (transform.position.y > 4f)
+        {
+            // Reverse the Y direction to keep it in bounds
+            moveDirection.y = -Mathf.Abs(moveDirection.y);
+        }
+        else if (transform.position.y < -4f)
+        {
+            // Reverse the Y direction to keep it in bounds
+            moveDirection.y = Mathf.Abs(moveDirection.y);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -58,12 +70,17 @@ public class FoodBehavior : MonoBehaviour
             {
                 FindAnyObjectByType<LevelUpManager>().EatSeaFloorFood();
                 Destroy(this.gameObject);
+                FindAnyObjectByType<EffectManager>().PlayEffect(0, this.transform.position, 0.7f);
+                FindAnyObjectByType<SoundManager>().PlaySound(0, 0);
             }
             else
             {
+                Debug.Log("Collide with player");
                 // Call the player's eat method
                 collision.gameObject.GetComponent<PlayerMovements>().eat();
                 FindAnyObjectByType<SpawnManager>().ReturnToPool(this.gameObject);
+                FindAnyObjectByType<EffectManager>().PlayEffect(0, this.transform.position, 0.7f);
+                FindAnyObjectByType<SoundManager>().PlaySound(0, 0);
             }
         }
     }

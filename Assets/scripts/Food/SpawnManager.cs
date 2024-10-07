@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public GameObject nutrientPrefab; // The nutrient prefab
-    public GameObject seaFloorNutrientPrefab; // The nutrient prefab
+    public List<GameObject> nutrientPrefabs;
     private float spawnInterval = 2f;  // Time between spawns
     private float seaSurface = 4f;     // Sea surface boundary (y-axis)
     private float seaFloor = -2f;      // Sea floor boundary (y-axis)
     private float minSpawnDistance = 2f; // Minimum distance between nutrients
     private int maxSpwanObject = 30;
+
+    public GameObject FollowingFish;
+    public GameObject AvoidFish;
 
     private List<GameObject> existingNutrients = new List<GameObject>(); // Track existing nutrients
     private Camera cam;
@@ -19,6 +21,7 @@ public class SpawnManager : MonoBehaviour
     {
         cam = Camera.main;
         StartCoroutine(SpawnNutrients());
+        //StartCoroutine(SpawnOtherTwo());
     }
 
     // Coroutine to spawn nutrients at a regular interval
@@ -52,13 +55,18 @@ public class SpawnManager : MonoBehaviour
         Destroy(food);
     }
 
-    // Spawns a nutrient randomly outside the screen but within sea surface and sea floor bounds
     void SpawnNutrient()
     {
+        // Get a random prefab from the list
+        GameObject selectedPrefab = nutrientPrefabs[Random.Range(0, nutrientPrefabs.Count)];
+
+        // Get a valid spawn position (assuming this method exists)
         Vector3 spawnPosition = GetValidSpawnPosition();
 
-        // Instantiate the nutrient and add it to the list of existing nutrients
-        GameObject nutrient = Instantiate(nutrientPrefab, spawnPosition, Quaternion.identity);
+        // Instantiate the randomly selected nutrient prefab at the spawn position
+        GameObject nutrient = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
+
+        // Add the instantiated nutrient to the list of existing nutrients
         existingNutrients.Add(nutrient);
     }
 
