@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
         else if (TextPageManager.StageTwoExplain)
         {
             Debug.Log("从华夏鳗鱼开始");
+            levelUpManager.UpdateText(30);
             TextPageManager.StageTwoExplain = true;
             levelUpManager.TailNotochord();
         }
@@ -51,7 +52,6 @@ public class GameManager : MonoBehaviour
         {
             if (!TextPageManager.GameStartExplain)
             {
-                Debug.Log("Show game star explain");
                 textPageManager.ShowExplain();
             }
         }
@@ -128,6 +128,10 @@ public class GameManager : MonoBehaviour
     // 结局1 
     public void EndingOne()
     {
+        if (endingScene)
+        {
+            return;
+        }
         endingScene = true;
         StartCoroutine(EndingOneHelper());
     }
@@ -153,6 +157,10 @@ public class GameManager : MonoBehaviour
     // 结局2
     public void EndingTwo()
     {
+        if (endingScene)
+        {
+            return;
+        }
         endingScene = true;
         StartCoroutine(EndingTwoHelper());
     }
@@ -170,6 +178,43 @@ public class GameManager : MonoBehaviour
         // 加载结局
         currentPages = EndTwoText;
         currentImagePages = EndTwoImage;
+        ShowEndScreen();
+    }
+
+    // 结局3
+    public void EndingThree()
+    {
+        if (endingScene)
+        {
+            return;
+        }
+        endingScene = true;
+        StartCoroutine(EndingTwoHelper());
+    }
+
+    // 结局4
+    public void EndingFour()
+    {
+        if (endingScene)
+        {
+            return;
+        }
+        endingScene = true;
+        StartCoroutine(EndingFourHelper());
+    }
+
+    private IEnumerator EndingFourHelper()
+    {
+        player.StopMoving();
+        Rigidbody2D rb = player.gameObject.GetComponent<Rigidbody2D>();
+        rb.gravityScale = 1;
+        rb.velocity = Vector2.zero; // Set linear velocity to zero
+
+        yield return new WaitForSeconds(3f);  // Wait for the specified time
+
+        // 加载结局
+        currentPages = EndFourText;
+        currentImagePages = EndFourImage;
         ShowEndScreen();
     }
 

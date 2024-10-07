@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class LevelUpManager : MonoBehaviour
 {
-    private int totalPoints;
+    public int totalPoints;
     public TextMeshProUGUI foodText;
     private EvolutionaryStages currentState = EvolutionaryStages.Meatworms;
 
@@ -37,6 +37,12 @@ public class LevelUpManager : MonoBehaviour
         foodText.text = "nutrients: " + totalPoints;
 
         CheckProgress();
+    }
+
+    public void UpdateText(int points)
+    {
+        totalPoints = points;
+        foodText.text = "nutrients: " + totalPoints;
     }
 
     private void CheckProgress()
@@ -157,7 +163,11 @@ public class LevelUpManager : MonoBehaviour
         Debug.Log("Level up Tail Notochord");
         player.ChangeSpeed(7);
         player.ChangeSprite(1);
-        textPageManager.ShowExplain();
+
+        if (!TextPageManager.StageTwoExplain)
+        {
+            textPageManager.ShowExplain();
+        }
     }
 
     // 升级脊索2

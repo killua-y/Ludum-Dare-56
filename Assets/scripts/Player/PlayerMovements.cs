@@ -83,9 +83,19 @@ public class PlayerMovements : MonoBehaviour
         Debug.Log("Now moving in speed :" + newSpeed);
     }
 
-
+    // 改变物种贴图
     public void ChangeSprite(int index)
     {
         animator.SetInteger("AnimationInt", index);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("Collide with something");
+        // Check if the enemy collided with the player
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            FindAnyObjectByType<GameManager>().EndingFour();
+        }
     }
 }

@@ -18,8 +18,6 @@ public class TextPageManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("GameStartExplain is " + GameStartExplain);
-        Debug.Log("StageTwoExplain is " + StageTwoExplain);
     }
 
     public void ShowExplain()
@@ -61,7 +59,7 @@ public class TextPageManager : MonoBehaviour
 
     void Updatetext(string imageLocation, string textInformation)
     {
-        endSceneImage.sprite = Resources.Load<Sprite>(imageLocation);
+        //endSceneImage.sprite = Resources.Load<Sprite>(imageLocation);
         endSceneText.text = textInformation;
     }
 
