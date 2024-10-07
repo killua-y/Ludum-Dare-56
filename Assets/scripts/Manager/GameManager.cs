@@ -37,14 +37,15 @@ public class GameManager : MonoBehaviour
         // 存档点3
         if (TextPageManager.StageThreeExplain)
         {
-
+            Debug.Log("从拥有开始");
+            levelUpManager.UpdateText(40);
+            levelUpManager.evolveBrain();
         }
         // 存档点2
         else if (TextPageManager.StageTwoExplain)
         {
             Debug.Log("从华夏鳗鱼开始");
             levelUpManager.UpdateText(30);
-            TextPageManager.StageTwoExplain = true;
             levelUpManager.TailNotochord();
         }
         // 正常从头开始游戏
@@ -181,7 +182,7 @@ public class GameManager : MonoBehaviour
         ShowEndScreen();
     }
 
-    // 结局3
+    // 结局3, 没能抵抗住诱惑结局
     public void EndingThree()
     {
         if (endingScene)
@@ -189,7 +190,22 @@ public class GameManager : MonoBehaviour
             return;
         }
         endingScene = true;
-        StartCoroutine(EndingTwoHelper());
+        StartCoroutine(EndingThreeHelper());
+    }
+
+    private IEnumerator EndingThreeHelper()
+    {
+        player.StopMoving();
+        Rigidbody2D rb = player.gameObject.GetComponent<Rigidbody2D>();
+        rb.gravityScale = 1;
+        rb.velocity = Vector2.zero; // Set linear velocity to zero
+
+        yield return new WaitForSeconds(3f);  // Wait for the specified time
+
+        // 加载结局
+        currentPages = EndThreeText;
+        currentImagePages = EndThreeImage;
+        ShowEndScreen();
     }
 
     // 结局4
@@ -218,60 +234,85 @@ public class GameManager : MonoBehaviour
         ShowEndScreen();
     }
 
+    // 结局5
+    public void EndingFive()
+    {
+        if (endingScene)
+        {
+            return;
+        }
+        StartCoroutine(EndingFiveHelper());
+    }
+
+    private IEnumerator EndingFiveHelper()
+    {
+        // 留给玩家的躲避时间
+        yield return new WaitForSeconds(15f);  // Wait for the specified time
+
+        endingScene = true;
+
+        yield return new WaitForSeconds(3f);  // Wait for the specified time
+
+        // 加载结局
+        currentPages = EndFiveText;
+        currentImagePages = EndFiveImage;
+        ShowEndScreen();
+    }
+
     // 结局1文本
-    public string[] EndOneText = new string[] {
+    private string[] EndOneText = new string[] {
         "Due to the excessively large filter-feeding holes in your head, you gradually " +
         "realize that your species is unable to swim in the ocean. Eventually, you settle on " +
             "the seafloor to filter-feed, becoming what would later evolve into echinoderms (such as starfish).",
 
         "Perhaps avoiding the enlargement of the head is another possible evolutionary path."
     };
-    public string[] EndOneImage = new string[] {
+    private string[] EndOneImage = new string[] {
         "EndSceneImage/end1",
         "EndSceneImage/end1",
     };
 
     // 结局2
-    public string[] EndTwoText = new string[] {
-        "第一",
-        "第二",
+    private string[] EndTwoText = new string[] {
+        "This is ending two",
+        "This is ending two",
     };
 
-    public string[] EndTwoImage = new string[] {
-        "第一",
-        "第二",
+    private string[] EndTwoImage = new string[] {
+        "EndSceneImage/end1",
+        "EndSceneImage/end1",
     };
 
     // 结局3
-    public string[] EndThreeText = new string[] {
-        "第一",
-        "第二",
+    private string[] EndThreeText = new string[] {
+        "This is ending three",
+        "This is ending three",
     };
 
-    public string[] EndThreeImage = new string[] {
-        "第一",
-        "第二",
+    private string[] EndThreeImage = new string[] {
+        "EndSceneImage/end1",
+        "EndSceneImage/end1",
     };
 
     // 结局4
-    public string[] EndFourText = new string[] {
-        "第一",
-        "第二",
+    private string[] EndFourText = new string[] {
+        "This is ending four",
+        "This is ending two",
     };
 
-    public string[] EndFourImage = new string[] {
-        "第一",
-        "第二",
+    private string[] EndFourImage = new string[] {
+        "EndSceneImage/end1",
+        "EndSceneImage/end1",
     };
 
     // 结局5
-    public string[] EndFiveText = new string[] {
-        "第一",
-        "第二",
+    private string[] EndFiveText = new string[] {
+        "This is ending five",
+        "This is ending two",
     };
 
-    public string[] EndFiveImage = new string[] {
-        "第一",
-        "第二",
+    private string[] EndFiveImage = new string[] {
+        "EndSceneImage/end1",
+        "EndSceneImage/end1",
     };
 }

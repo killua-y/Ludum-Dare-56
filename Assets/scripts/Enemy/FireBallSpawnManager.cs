@@ -6,8 +6,8 @@ public class FireBallSpawnManager : MonoBehaviour
 {
     public GameObject fireballPrefab; // Assign the fireball prefab in the inspector
     public Transform player; // Assign the player's transform in the inspector
-    public float spawnInterval = 1.0f; // Adjust the spawn interval as needed
-    public float speed = 0.5f; // Control the falling speed of the fireballs
+    [SerializeField] private float spawnInterval = 0.5f; // Adjust the spawn interval as needed
+    [SerializeField] private float speed = 0.5f; // Control the falling speed of the fireballs
     private float destroyTime = 5f;
 
     void Start()

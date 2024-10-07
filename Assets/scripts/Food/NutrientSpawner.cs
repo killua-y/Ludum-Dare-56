@@ -8,17 +8,19 @@ public class NutrientSpawner : MonoBehaviour
     public Transform player; // Assign the player's transform in the inspector
     private List<GameObject> nutrients = new List<GameObject>(); // Track existing nutrients
     private int maxSpwanObject = 50;
-//    private int count = 0;
-    public bool SeaFloorFood = false;
 
     void Start()
+    {
+    }
+
+    public void StartSpwan()
     {
         StartCoroutine(SpawnSeaFloorNutrients());
     }
 
     IEnumerator SpawnSeaFloorNutrients()
     {
-        while (SeaFloorFood)
+        while (true)
         {
             if (nutrients.Count < maxSpwanObject)
             {
@@ -31,7 +33,7 @@ public class NutrientSpawner : MonoBehaviour
                 Vector2 spawnPosition = new Vector2(xPosition, yPosition);
 
                 // Instantiate the nutrient prefab at the spawn position with no rotation
-                GameObject newNutrients = Instantiate(nutrientPrefab, spawnPosition, Quaternion.identity);
+                GameObject newNutrients = Instantiate(nutrientPrefab, spawnPosition, Quaternion.identity, transform);
                 nutrients.Add(newNutrients);
 
             }
@@ -39,10 +41,5 @@ public class NutrientSpawner : MonoBehaviour
             // Wait for 0.1 seconds before spawning the next nutrient
             yield return new WaitForSeconds(0.1f);
         }
-    }
-
-    public void extinction()
-    {
-
     }
 }

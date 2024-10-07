@@ -59,7 +59,7 @@ public class TextPageManager : MonoBehaviour
 
     void Updatetext(string imageLocation, string textInformation)
     {
-        //endSceneImage.sprite = Resources.Load<Sprite>(imageLocation);
+        endSceneImage.sprite = Resources.Load<Sprite>(imageLocation);
         endSceneText.text = textInformation;
     }
 
@@ -114,7 +114,7 @@ public class TextPageManager : MonoBehaviour
 
     // 科普3
     private string[] NarrationText3 = new string[] {
-        "image",
+        "This is narration three",
         "image",
     };
     private string[] NarrationImage3 = new string[] {

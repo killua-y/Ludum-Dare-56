@@ -54,9 +54,17 @@ public class FoodBehavior : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            // Call the player's eat method
-            collision.gameObject.GetComponent<PlayerMovements>().eat();
-            FindAnyObjectByType<SpawnManager>().ReturnToPool(this.gameObject);
+            if (isSeaFloor)
+            {
+                FindAnyObjectByType<LevelUpManager>().EatSeaFloorFood();
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                // Call the player's eat method
+                collision.gameObject.GetComponent<PlayerMovements>().eat();
+                FindAnyObjectByType<SpawnManager>().ReturnToPool(this.gameObject);
+            }
         }
     }
 }

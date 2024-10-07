@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class LevelUpManager : MonoBehaviour
 {
     public int totalPoints;
+    public int pointsAfterBrain;
+    public int SeaFloorFoodCounter;
     public TextMeshProUGUI foodText;
     private EvolutionaryStages currentState = EvolutionaryStages.Meatworms;
 
@@ -22,6 +24,10 @@ public class LevelUpManager : MonoBehaviour
     private GameManager gameManager;
     private TextPageManager textPageManager;
 
+    public GameObject Enemy;
+    public GameObject StageOneImage;
+    public GameObject StageTwoImage;
+    public GameObject StageThreeImage;
 
     private void Start()
     {
@@ -31,9 +37,20 @@ public class LevelUpManager : MonoBehaviour
         textPageManager = FindAnyObjectByType<TextPageManager>();
     }
 
+    public void EatSeaFloorFood()
+    {
+        SeaFloorFoodCounter += 1;
+        CheckProgress();
+    }
+
     public void eat()
     {
         totalPoints += 1;
+        if (currentState == EvolutionaryStages.BrainAndEye)
+        {
+            Debug.Log("抵御诱惑分" + pointsAfterBrain);
+            pointsAfterBrain += 1;
+        }
         foodText.text = "nutrients: " + totalPoints;
 
         CheckProgress();
@@ -45,20 +62,16 @@ public class LevelUpManager : MonoBehaviour
         foodText.text = "nutrients: " + totalPoints;
     }
 
+    private bool hasMouthLevelTwoUpgradeTriggered = false;
+
     private void CheckProgress()
     {
-
-        if (totalPoints == 3)
-        {
-            NewEvolvetraits();
-            AddLevelUpOption("Enlarge the filter-feeding mouth (increase size)", MouthLeveloneUp, true);
-        }
-
         // 如果升级口部就注定会是结局1
         if (currentState == EvolutionaryStages.MouthPath)
         {
-            if (totalPoints == 6)
+            if (totalPoints >= 6 && !hasMouthLevelTwoUpgradeTriggered)
             {
+                hasMouthLevelTwoUpgradeTriggered = true;
                 NewEvolvetraits();
                 AddLevelUpOption("Enlarge the filter-feeding mouth again (increase more size)", MouthLeveltwoUp, true);
             }
@@ -70,28 +83,49 @@ public class LevelUpManager : MonoBehaviour
             return;
         }
 
-        if (totalPoints == 6)
+        // 升级滤食口
+        if (totalPoints == 3)
+        {
+            NewEvolvetraits();
+            AddLevelUpOption("Enlarge the filter-feeding mouth (increase size)", MouthLeveloneUp, true);
+        }
+        // 演化脊索
+        else if (totalPoints == 6)
         {
             HeadButton.gameObject.SetActive(false);
 
             NewEvolvetraits();
             AddLevelUpOption("Contract the filter-feeding mouth and evolve a dorsal nerve (increase moving speed)", TailNotochord, false);
         }
-
-        if (totalPoints == 9)
+        // 结局2选项，脊索延伸到头部
+        else if (totalPoints == 9)
         {
             NewEvolvetraits();
             AddLevelUpOption("Extend the notochord to the head (Significantly enhance movement speed)", WholeBodyNotochord, true);
         }
-
-        if (totalPoints == 15)
+        // 演化大脑，挤占结局2选项
+        else if (totalPoints == 15)
         {
             HeadButton.gameObject.SetActive(false);
 
             NewEvolvetraits();
-            AddLevelUpOption("Evlolve Brain", evolveBrain, true);
+            AddLevelUpOption("Evolve Brain", evolveBrain, true);
+        }
+        // 抵抗住了海底的诱惑，前提是进化了大脑才能开始计数
+        else if (pointsAfterBrain == 4)
+        {
+            Debug.Log("触发奥陶纪大灭绝");
+            FindAnyObjectByType<NutrientSpawner>().gameObject.SetActive(false);
+            // 奥陶纪大灭绝
+            Enemy.gameObject.SetActive(true);
+            gameManager.EndingFive();
         }
 
+        // 没能抵抗住诱惑
+        if (SeaFloorFoodCounter == 5)
+        {
+            gameManager.EndingThree();
+        }
     }
 
     private void NewEvolvetraits()
@@ -160,17 +194,19 @@ public class LevelUpManager : MonoBehaviour
     // 升级脊索1
     public void TailNotochord()
     {
-        Debug.Log("Level up Tail Notochord");
         player.ChangeSpeed(7);
         player.ChangeSprite(1);
-
+        StageOneImage.SetActive(false);
+        StageTwoImage.SetActive(true);
+        StageThreeImage.SetActive(false);
+        currentState = EvolutionaryStages.NotochordL1;
         if (!TextPageManager.StageTwoExplain)
         {
             textPageManager.ShowExplain();
         }
     }
 
-    // 升级脊索2
+    // 升级脊索至头部,结局2
     private void WholeBodyNotochord()
     {
         player.ChangeSpeed(9);
@@ -178,11 +214,28 @@ public class LevelUpManager : MonoBehaviour
     }
 
     // 演化大脑
-    private void evolveBrain()
+    public void evolveBrain()
     {
-        player.ChangeSpeed(9);
-        FindAnyObjectByType<NutrientSpawner>().SeaFloorFood = true;
+        pointsAfterBrain = 0;
+        currentState = EvolutionaryStages.BrainAndEye;
+        player.ChangeSpeed(7);
+        player.ChangeRotation(150f);
+        player.ChangeSprite(2);
+        StageOneImage.SetActive(false);
+        StageTwoImage.SetActive(false);
+        StageThreeImage.SetActive(true);
+        FindAnyObjectByType<NutrientSpawner>().StartSpwan();
 
+        if (!TextPageManager.StageThreeExplain)
+        {
+            textPageManager.ShowExplain();
+        }
+    }
+
+    // 触发奥陶纪末大灭绝
+    private void triggerExtinction()
+    {
+        currentState = EvolutionaryStages.Final;
     }
 }
 

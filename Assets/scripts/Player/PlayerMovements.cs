@@ -83,6 +83,13 @@ public class PlayerMovements : MonoBehaviour
         Debug.Log("Now moving in speed :" + newSpeed);
     }
 
+    // 改变游泳专向能力rotationSpeed
+    public void ChangeRotation(float newRotation)
+    {
+        rotationSpeed = newRotation;
+        Debug.Log("Now can rotate in :" + rotationSpeed);
+    }
+
     // 改变物种贴图
     public void ChangeSprite(int index)
     {
