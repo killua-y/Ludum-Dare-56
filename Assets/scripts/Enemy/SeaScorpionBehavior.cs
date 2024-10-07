@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class SeaScorpionBehavior : MonoBehaviour
 {
-    public float walkSpeed = 2f; // Speed of the enemy's random walk
-    public float DestoryDistance = 40f;
-    public float detectionRadius = 5f; // Radius to detect the player
-    public float jumpForce = 10f; // Force applied when jumping towards the player
-    public float jumpDelay = 1f; // Time to wait before jumping towards the player
-    public float jumpCoolDown = 5f;
-    public float directionChangeTimeMin = 1f; // Minimum time before changing direction
-    public float directionChangeTimeMax = 2f; // Maximum time before changing direction
+    private float walkSpeed = 2f; // Speed of the enemy's random walk
+    private float DestoryDistance = 40f;
+    private float detectionRadius = 6f; // Radius to detect the player
+    private float jumpForce = 10f; // Force applied when jumping towards the player
+    private float jumpDelay = 1f; // Time to wait before jumping towards the player
+    private float jumpCoolDown = 3f;
+    private float directionChangeTimeMin = 1f; // Minimum time before changing direction
+    private float directionChangeTimeMax = 2f; // Maximum time before changing direction
     private float directionChangeTimer;
 
     private float counter;
@@ -30,6 +30,7 @@ public class SeaScorpionBehavior : MonoBehaviour
         walkDirection = new Vector2(Random.Range(-1f, 1f), 0).normalized;
         directionChangeTimer = Random.Range(directionChangeTimeMin, directionChangeTimeMax); // Set initial timer
         animator = this.GetComponent<Animator>();
+        counter = 2.5f;
     }
 
     void Update()

@@ -69,7 +69,7 @@ public class LevelUpManager : MonoBehaviour
         // 如果升级口部就注定会是结局1
         if (currentState == EvolutionaryStages.MouthPath)
         {
-            if (totalPoints >= 6 && !hasMouthLevelTwoUpgradeTriggered)
+            if (totalPoints >= 30 && !hasMouthLevelTwoUpgradeTriggered)
             {
                 hasMouthLevelTwoUpgradeTriggered = true;
                 NewEvolvetraits();
@@ -84,13 +84,13 @@ public class LevelUpManager : MonoBehaviour
         }
 
         // 升级滤食口
-        if (totalPoints == 3)
+        if (totalPoints == 15)
         {
             NewEvolvetraits();
             AddLevelUpOption("Enlarge the filter-feeding mouth (increase size)", MouthLeveloneUp, true);
         }
         // 演化脊索
-        else if (totalPoints == 6)
+        else if (totalPoints == 30)
         {
             HeadButton.gameObject.SetActive(false);
 
@@ -98,13 +98,13 @@ public class LevelUpManager : MonoBehaviour
             AddLevelUpOption("Contract the filter-feeding mouth and evolve a dorsal nerve (increase moving speed)", TailNotochord, false);
         }
         // 结局2选项，脊索延伸到头部
-        else if (totalPoints == 9)
+        else if (totalPoints == 38)
         {
             NewEvolvetraits();
             AddLevelUpOption("Extend the notochord to the head (Significantly enhance movement speed)", WholeBodyNotochord, true);
         }
         // 演化大脑，挤占结局2选项
-        else if (totalPoints == 15)
+        else if (totalPoints == 50)
         {
             HeadButton.gameObject.SetActive(false);
 
@@ -224,6 +224,7 @@ public class LevelUpManager : MonoBehaviour
         StageOneImage.SetActive(false);
         StageTwoImage.SetActive(false);
         StageThreeImage.SetActive(true);
+        FindAnyObjectByType<CameraFollow>().SetCameraSize(7);
         FindAnyObjectByType<NutrientSpawner>().StartSpwan();
 
         if (!TextPageManager.StageThreeExplain)

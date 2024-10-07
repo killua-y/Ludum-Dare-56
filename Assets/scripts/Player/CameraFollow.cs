@@ -13,4 +13,11 @@ public class CameraFollow : MonoBehaviour
         Vector3 targetPosition = target.position + offset;
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
     }
+
+    // Function to set a specific camera size
+    public void SetCameraSize(float size)
+    {
+        Camera cam = GetComponent<Camera>();
+        cam.orthographicSize = size;
+    }
 }

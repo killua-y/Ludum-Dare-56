@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     private int currentPageNumber = 0;         // 当前页数
 
     private bool endingScene = false;
+    private bool EndingFiveBool = false;
 
     LevelUpManager levelUpManager;
     TextPageManager textPageManager;
@@ -37,8 +38,8 @@ public class GameManager : MonoBehaviour
         // 存档点3
         if (TextPageManager.StageThreeExplain)
         {
-            Debug.Log("从拥有开始");
-            levelUpManager.UpdateText(40);
+            Debug.Log("从拥有大脑开始");
+            levelUpManager.UpdateText(50);
             levelUpManager.evolveBrain();
         }
         // 存档点2
@@ -90,6 +91,7 @@ public class GameManager : MonoBehaviour
 
         // Ensure the final position is set
         EndScenePanel.transform.localPosition = targetPosition;
+        Time.timeScale = 0;
     }
 
     // 切换到下一页的方法
@@ -102,8 +104,16 @@ public class GameManager : MonoBehaviour
             // 如果当前是最后一页同时是结局，那把按钮改成重来
             if ((currentPageNumber == currentPages.Length - 1) && (endingScene))
             {
-                EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "try again";
-                EndSceneButton.onClick.AddListener(TryAgain);
+                if (EndingFiveBool)
+                {
+                    EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "Thank You";
+                    EndSceneButton.onClick.AddListener(BackToMainMenu);
+                }
+                else
+                {
+                    EndSceneButton.GetComponentInChildren<TextMeshProUGUI>().text = "try again";
+                    EndSceneButton.onClick.AddListener(TryAgain);
+                }
             }
             else
             {
@@ -124,6 +134,13 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // 回到住菜单
+    void BackToMainMenu()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("MenuScene");
     }
 
     // 结局1 
@@ -250,6 +267,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(15f);  // Wait for the specified time
 
         endingScene = true;
+        EndingFiveBool = true;
 
         yield return new WaitForSeconds(3f);  // Wait for the specified time
 
@@ -268,51 +286,65 @@ public class GameManager : MonoBehaviour
         "Perhaps avoiding the enlargement of the head is another possible evolutionary path."
     };
     private string[] EndOneImage = new string[] {
-        "EndSceneImage/end1",
-        "EndSceneImage/end1",
+        "EndSceneImage/End1_1",
+        "EndSceneImage/End1_2",
     };
 
     // 结局2
     private string[] EndTwoText = new string[] {
-        "This is ending two",
-        "This is ending two",
+        "The notochord was a great help for swimming, but your group of chordates chose to extend the notochord all the way to the head, preventing the development of a brain.",
+        "By doing this, you closed off future possibilities and became a new branch called cephalochordates. The lancelet is one of your descendants.",
+        "Although a faster swimming speed is tempting, keeping the notochord in the back half of the body might be a better choice.",
     };
 
     private string[] EndTwoImage = new string[] {
-        "EndSceneImage/end1",
-        "EndSceneImage/end1",
+        "EndSceneImage/End2_1",
+        "EndSceneImage/End2_2",
+        "EndSceneImage/End2_3",
     };
 
     // 结局3
     private string[] EndThreeText = new string[] {
-        "This is ending three",
-        "This is ending three",
+        "With a wider field of vision, you discovered that most nutrients in the early Cambrian seas were concentrated near the ocean floor.",
+        "Your group of chordates gradually chose to reduce their nerve and movement abilities, attaching themselves to the seabed to filter-feed from the water. This is how you became tunicates. ",
+        "Perhaps moving away from the ocean floor and continuing to explore the potential of the nervous system is a more promising evolutionary path for the future",
     };
 
     private string[] EndThreeImage = new string[] {
-        "EndSceneImage/end1",
-        "EndSceneImage/end1",
+        "EndSceneImage/End3_1",
+        "EndSceneImage/End3_2",
+        "EndSceneImage/End3_3",
     };
 
     // 结局4
     private string[] EndFourText = new string[] {
-        "This is ending four",
-        "This is ending two",
+        "Evolution is often this cruel—choosing the right path doesn’t guarantee survival, as natural disasters and predators are always lurking. As Earth faced its first mass extinction, the Late Ordovician extinction, your group of chordates also became a part of history.",
+        "But life finds a way, and evolution continues on.",
     };
 
     private string[] EndFourImage = new string[] {
-        "EndSceneImage/end1",
-        "EndSceneImage/end1",
+        "EndSceneImage/End4_1",
+        "EndSceneImage/End4_1",
     };
 
     // 结局5
     private string[] EndFiveText = new string[] {
-        "This is ending five",
-        "This is ending two",
+        "After surviving the Late Ordovician mass extinction, the once-small worm-like creatures began to reveal their true potential on the evolutionary path.",
+        "Finally, your small group of chordates made it to the end of this path of freedom, evolving into vertebrates. In the mid-early Cambrian period, only three fossil types were found in small quantities, showing just how rare it was for deuterostomes to reach the end of this road.",
+        "At this time, the nervous systems of most other animals were improved versions of a nerve net, making it difficult for them to adapt to bilaterally symmetrical body structures.",
+        "But your group of chordates, after what seemed like a series of blind struggles, essentially built a new nervous system from scratch—one that was highly adapted to a symmetrical body.",
+        "Following this, your vertebrate group evolved bones that were both strong and lightweight. You also deeply improved the nervous system, evolving myelin sheaths, marking a new era in the speed of nerve transmission.",
+        "Finally, vertebrates evolved jaws, leading to the emergence of jawed fish.",
+        "Once upon a time, trilobites reigned supreme, sea scorpions perfected their limb adaptations, and the cephalopods were on the rise. But no one could have imagined that the seemingly harmless little worms had already undergone a complete bodily revolution. While your rivals might have reached the middle of their game, you have only just begun. But remember, we’re not even playing on the same board.",
     };
 
     private string[] EndFiveImage = new string[] {
-        "EndSceneImage/end1",
-        "EndSceneImage/end1",
+        "EndSceneImage/End5_2",
+        "EndSceneImage/End5_2",
+        "EndSceneImage/End5_1",
+        "EndSceneImage/End5_1",
+        "EndSceneImage/End5_3",
+        "EndSceneImage/End5_3",
+        "EndSceneImage/End5_3",
     };
 }

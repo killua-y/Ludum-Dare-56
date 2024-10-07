@@ -96,8 +96,8 @@ public class TextPageManager : MonoBehaviour
         "Such a simple structure can only filter solid nutrients. So, for now, just focus on eating enough.",
     };
     private string[] NarrationImage1 = new string[] {
-        "image",
-        "image",
+        "NarrationImage/houkou",
+        "NarrationImage/houkou",
     };
 
     // 科普2
@@ -107,18 +107,20 @@ public class TextPageManager : MonoBehaviour
         "This is how the notochord came to be, and chordates appeared. But for now, your main goal is still to eat enough.",
     };
     private string[] NarrationImage2 = new string[] {
-        "image",
-        "image",
-        "image",
+        "NarrationImage/Narration2_1",
+        "NarrationImage/Narration2_2",
+        "NarrationImage/Narration2_3",
     };
 
     // 科普3
     private string[] NarrationText3 = new string[] {
-        "This is narration three",
-        "image",
+        "Congratulations! You've discovered how vertebrates got their most powerful tool: the brain.",
+        "This species kept its notochord in the back half of its body and stretched its back forward to grow a simple brain.",
+        "With this new brain, you can see better and farther. Now, go out and find more food!",
     };
     private string[] NarrationImage3 = new string[] {
-        "image",
-        "image",
+        "NarrationImage/Narration3_1",
+        "NarrationImage/Narration3_2",
+        "NarrationImage/Narration3_3",
     };
 }
